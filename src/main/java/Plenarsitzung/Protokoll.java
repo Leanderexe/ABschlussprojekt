@@ -60,11 +60,11 @@ public class Protokoll {
         // System.out.println("anzahl redner:"+ redner_list.getLength());
         for (int j = 0;j < redner_list.getLength(); j++){
             // Fill up all Lists with zeros so that every list has the same size.
-            Titel_Liste.add(0);
-            Vornamen_Liste.add(0);
-            Nachnamen_Liste.add(0);
-            Fraktion_Liste.add(0);
-            Namenszusatz_Liste.add(0);
+            Titel_Liste.add("0");
+            Vornamen_Liste.add("0");
+            Nachnamen_Liste.add("0");
+            Fraktion_Liste.add("0");
+            Namenszusatz_Liste.add("0");
 
             Node person = (redner_list.item(j));
             if (person.getNodeType()==Node.ELEMENT_NODE){
@@ -141,13 +141,15 @@ public class Protokoll {
     }
     // Print out all Speakers.
     public void print_Redner() {
-        System.out.println("Auflistung aller Redner:"+ Redner_list.size());
+        System.out.println("----------------------------Auflistung aller Redner"+ "(" + Redner_list.size() + "):" +"----------------------------");
         for (int i = 0; i < Redner_list.size(); i++) {
             Redner_list.get(i).print();
         }
     }
-    // Finds sub
-    public void find_Redner(){
-
+    // Filters the names of every Speaker for a certain substring.
+    public void filter_Redner(String substring) {
+        for (int i = 0; i < Redner_list.size(); i++) {
+            Redner_list.get(i).Filter(substring);
+        }
     }
 }

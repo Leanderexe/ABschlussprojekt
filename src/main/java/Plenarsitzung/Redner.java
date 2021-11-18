@@ -36,10 +36,10 @@ public class Redner {
     public void print(){
         if (Titel == null) {
             if (Namenszusatz == null){
-            System.out.println( Vorname + " " + Nachname + " " + Fraktion);
+            System.out.println(Vorname + " " + Nachname + " " + Fraktion);
             }
             else{
-                System.out.println( Vorname + " " + Namenszusatz+ " " + Nachname + " " + Fraktion);
+                System.out.println(Vorname + " " + Namenszusatz+ " " + Nachname + " " + Fraktion);
             }
         }
         else {
@@ -47,6 +47,7 @@ public class Redner {
                 System.out.println(Titel + " " + Vorname + " " + Nachname + " " + Fraktion);
             }
             else {
+
                 System.out.println(Titel + " " + Vorname + " " + Namenszusatz + " " + Nachname + " " + Fraktion);
             }
         }
@@ -57,5 +58,24 @@ public class Redner {
             return false;
         }
         return true;
+    }
+
+    public void Filter(String substring){
+        if (Vorname.contains(substring)){
+            print();
+        }
+        else if (Nachname.contains(substring)){
+            print();
+        }
+        else if (Namenszusatz != null){
+            if (Namenszusatz.contains(substring)) {
+                print();
+            }
+        }
+        else if (Titel != null) {
+            if (Titel.contains(substring)) {
+                print();
+            }
+        }
     }
 }
