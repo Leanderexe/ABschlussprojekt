@@ -20,31 +20,41 @@ import java.util.zip.ZipFile;
 
 public class Protokoll {
     String Datum;
-    String Titel;
     int Legislaturperiode;
     String Tagesordnungspunkt;
     String Sitzungsleitender;
     ArrayList<Redner> Redner_list = new ArrayList();
     List Fraktionen = new ArrayList();
     ArrayList<Tagesordnungspunkt> top_list = new ArrayList();
+    ArrayList<Rede> Speaker_list = new ArrayList();
 
     // Unzips the folder and provides the path for every xml file.
-    public void Open_Zip(String zip) throws IOException {
+    public boolean Open_Zip(String zip) throws IOException {
         //xml_files = list
-        ZipFile zipFile = new ZipFile(zip);
-        Enumeration<? extends ZipEntry> xml = zipFile.entries();
-        System.out.println("Die Parlamentsprotokolle werden eingelesen. Bitte haben Sie einen Moment Geduld.");
-        while (xml.hasMoreElements()) {
-            String xml_path = zip.replace(".zip", "\\" + xml.nextElement());
-            try{
-                if (xml_path.contains("xml")) {
-                    Read_File(xml_path);
+        try {
+            ZipFile zipFile = new ZipFile(zip);
+            Enumeration<? extends ZipEntry> xml = zipFile.entries();
+            System.out.println("Die Parlamentsprotokolle werden eingelesen. Bitte haben Sie einen Moment Geduld.");
+
+            while (xml.hasMoreElements()) {
+                //String xml_path = zip.replace(".zip", "\\" + xml.nextElement());
+                try{
+                    String xml_path = zip.replace(".zip", "\\" + xml.nextElement());
+                    if (xml_path.contains("xml")) {
+                        Read_File(xml_path);
+                    }
+                }
+                catch(Exception e){
+                    System.out.println(">>>>>>Fehler: Die Datei konnte nicht eingelesen werden.<<<<<<<<" + '\n');
+                    return false;
                 }
             }
-            catch(Exception e){
-                System.out.println("das hat nicht geklappt");
-            }
+        } catch (IOException e) {
+            System.out.println(">>>>>>Fehler: Die Datei konnte nicht eingelesen werden.<<<<<<<<" + '\n');
+            return false;
         }
+
+        return true;
     }
 
     public void Read_File(String filename) throws IOException, SAXException, ParserConfigurationException {
@@ -157,11 +167,16 @@ public class Protokoll {
         NodeList pl_nr = doc.getElementsByTagName("sitzungsnr");
         String Sitzungsindex = pl_nr.item(0).getTextContent();  // Sitzungsnummer
         NodeList tagesOP = doc.getElementsByTagName("tagesordnungspunkt");
+        NodeList date = doc.getElementsByTagName("datum");
+        String Datum = date.item(0).getTextContent();
         for (int j = 0;j < tagesOP.getLength(); j++) {
 
             List Kommentare_Liste = new ArrayList();
-            List id_Liste = new ArrayList();
+            List redner_id_list = new ArrayList();
+            List rede_id_list = new ArrayList();
             List Inhalt_Liste = new ArrayList();
+            List count_kommentare_list = new ArrayList();
+            StringBuilder Titel = new StringBuilder();
             //System.out.println(tagesOP.getTextContent());
             Node Node_OP = (tagesOP.item(j));
             //System.out.println(Node_OP.getTextContent());
@@ -177,14 +192,24 @@ public class Protokoll {
                     if (Rede.getTagName() == "p"){
                         //System.out.println(Rede.getTextContent());
                         Inhalt_Liste.add(Rede.getTextContent());
+                        if (Rede.getAttribute("klasse").equals("T_NaS")) {
+                            Titel.append(" " + Rede.getTextContent());
+                        }
+                        if (Rede.getAttribute("klasse").equals("T_fett")){
+                            Titel.append(" " + Rede.getTextContent());
+                        }
                     }
+
                     else if (Rede.getTagName() == "kommentar") {
                         //System.out.println(Rede.getTextContent());
                         Inhalt_Liste.add(Rede.getTextContent());
                     }
+
                     if (Rede.getTagName() == "rede") {
+                        List Kommentare_pro_rede = new ArrayList();
                         //System.out.println(Rede.getAttribute("id"));
                         String rede_id = Rede.getAttribute("id");
+                        //System.out.println(rede_id);
                         //Element p = (Element) Rede.getElementsByTagName("p");
                         //System.out.println(p.getTextContent());
                         NodeList rede_child_list = Rede.getChildNodes();
@@ -205,7 +230,7 @@ public class Protokoll {
                                                 Element redner = (Element) r_node;
                                                 if (redner.getTagName() == "redner") {
                                                     String redner_id = redner.getAttribute("id"); // Redner_id
-                                                    id_Liste.add(redner_id);
+                                                    redner_id_list.add(redner_id);
                                                 }
                                             }
                                         }
@@ -217,12 +242,14 @@ public class Protokoll {
                                 }
                                 else if (text.getTagName() == "kommentar"){
                                     //System.out.println("Das ist ein Kommentar:"  + text.getTextContent());
+                                    Kommentare_pro_rede.add(text.getTextContent());
                                     Kommentare_Liste.add(text.getTextContent());
                                     Inhalt_Liste.add(text.getTextContent());
                                 }
-                                //System.out.println(text.getTextContent());
                             }
                         }
+                        Rede Speaker = new Rede(Sitzungsindex, top_id, rede_id, Kommentare_pro_rede, Datum, Titel.toString());
+                        Speaker_list.add(Speaker);
                         }
 
                     }
@@ -267,6 +294,31 @@ public class Protokoll {
         }
         if (found < 1){
             System.out.println("-------------Es konnte kein Tagesordnungspunkt gefunden werden--------------");
+        }
+    }
+    public void top_five(){
+        //  Initilize Array with values.
+        List<Integer> best_five_num =  new ArrayList();
+        List best_five_obj = new ArrayList();
+        for (int i = 0; i < 5; i++){
+            best_five_num.add(0);
+            best_five_obj.add(0);
+        }
+        // find the objects with the most stands.
+        for (int i = 0; i < Speaker_list.size(); i++) {
+            int ret  = Speaker_list.get(i).find_most_stands();
+            loop:
+            for (int k = 0; k < best_five_num.size(); k++){
+                if (ret > best_five_num.get(k)){
+                    best_five_num.set(k, ret);
+                    best_five_obj.set(k, i);
+                    break loop;
+                }
+            }
+        }
+        // Print out these objects.
+        for (int i = 0; i < best_five_obj.size(); i++){
+            Speaker_list.get((Integer) best_five_obj.get(i)).print_top_five(i, best_five_num.get(i));
         }
     }
 
