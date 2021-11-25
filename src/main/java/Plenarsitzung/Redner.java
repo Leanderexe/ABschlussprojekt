@@ -9,10 +9,11 @@ public class Redner {
     String Vorname;
     String Titel;
     String Namenszusatz;
+    String ID;
 
 
 
-    public Redner(Object Ti, Object Vor, Object NZ, Object Nach, Object Frak) {
+    public Redner(Object Ti, Object Vor, Object NZ, Object Nach, Object Frak,  Object id) {
         if (Ti.toString().equals("0")) {
         }
         else{
@@ -25,8 +26,10 @@ public class Redner {
         }
         Vorname  = Vor.toString();
         Nachname = Nach.toString();
+        ID = id.toString();
+        //System.out.println(ID);
         if (Frak.toString().equals("0")) {
-            Fraktion = "(Fraktionslos)";
+            Fraktion = "fraktionslos";
         }
         else {
             Fraktion = Frak.toString();
@@ -60,6 +63,8 @@ public class Redner {
         return true;
     }
 
+
+    // Looks if the intput string is a substring of any part of a name form a Speaker.
     public void Filter(String substring){
         if (Vorname.contains(substring)){
             print();
@@ -75,6 +80,34 @@ public class Redner {
         else if (Titel != null) {
             if (Titel.contains(substring)) {
                 print();
+            }
+        }
+    }
+
+
+    public void Sort_For_Fraction(String Frak){
+        // System.out.println(Fraktion + "     "+ Frak);
+        if (Fraktion.equals(Frak)){
+            print_for_Frak();
+        }
+    }
+
+    public void print_for_Frak(){
+        if (Titel == null) {
+            if (Namenszusatz == null){
+                System.out.println(Vorname + " " + Nachname);
+            }
+            else{
+                System.out.println(Vorname + " " + Namenszusatz+ " " + Nachname);
+            }
+        }
+        else {
+            if (Namenszusatz == null){
+                System.out.println(Titel + " " + Vorname + " " + Nachname);
+            }
+            else {
+
+                System.out.println(Titel + " " + Vorname + " " + Namenszusatz + " " + Nachname);
             }
         }
     }

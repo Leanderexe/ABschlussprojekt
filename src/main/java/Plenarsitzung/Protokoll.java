@@ -25,6 +25,8 @@ public class Protokoll {
     String Tagesordnungspunkt;
     String Sitzungsleitender;
     ArrayList<Redner> Redner_list = new ArrayList();
+    List Fraktionen = new ArrayList();
+    ArrayList<Tagesordnungspunkt> top_list = new ArrayList();
 
     // Unzips the folder and provides the path for every xml file.
     public void Open_Zip(String zip) throws IOException {
@@ -51,6 +53,7 @@ public class Protokoll {
         List Vornamen_Liste = new ArrayList();
         List Titel_Liste = new ArrayList();
         List Namenszusatz_Liste = new ArrayList();
+        List ID_Liste = new ArrayList();
 
         DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = fac.newDocumentBuilder();
@@ -65,19 +68,22 @@ public class Protokoll {
             Nachnamen_Liste.add("0");
             Fraktion_Liste.add("0");
             Namenszusatz_Liste.add("0");
+            ID_Liste.add("0");
+
 
             Node person = (redner_list.item(j));
             if (person.getNodeType()==Node.ELEMENT_NODE){
                 Element per = (Element) person;
-                String id = per.getAttribute("id");
-                //System.out.println(id);
+                String ID = per.getAttribute("id");
+                // System.out.println(ID);
+                ID_Liste.set(j, ID);
+                //System.out.println(doc.getElementsByTagName("redner").item(j).getTextContent());
                 NodeList child_list = per.getChildNodes();
                 for (int n = 0; n < child_list.getLength(); n++){
                     Node child = child_list.item(n);
                     if (child.getNodeType()==Node.ELEMENT_NODE){
                         Element children = (Element) child;
                         String ch = children.getAttribute("vorname");
-
                         //System.out.println(children.getTextContent());
 
                         NodeList name_list = children.getChildNodes();
@@ -88,6 +94,7 @@ public class Protokoll {
                                 Element vorname = (Element) name;
                                 //System.out.println(vorname.getTextContent());
                                 //System.out.println(vorname.getTagName());
+                                //System.out.println(doc.getElementsByTagName("vorname").item(j).getTextContent());
                                 if (vorname.getTagName() == "titel"){  // get content from
                                     //System.out.println("titel ==== " + vorname.getTextContent());
                                     Titel_Liste.set(j, vorname.getTextContent());
@@ -123,11 +130,19 @@ public class Protokoll {
                                 counter = 1;
                             }
                         }
-                        // Creats an new instance of the Redner Class provided that it is not already an object of Redner.
+                        // Creats a new instance of the Redner Class provided that it is not already an object of Redner.
                         if (counter < 1) {
-                            Redner redner = new Redner(Titel_Liste.get(j), Vornamen_Liste.get(j), Namenszusatz_Liste.get(j), Nachnamen_Liste.get(j), Fraktion_Liste.get(j));
+                            Redner redner = new Redner(Titel_Liste.get(j), Vornamen_Liste.get(j), Namenszusatz_Liste.get(j), Nachnamen_Liste.get(j), Fraktion_Liste.get(j), ID_Liste.get(j));
                             Redner_list.add(redner);
+
+                            // Add all fraction into a list, so we can use it to iterate over all Fractions.
+                            if (Fraktionen.contains(Fraktion_Liste.get(j))){
+                            }
+                            else {
+                                Fraktionen.add(Fraktion_Liste.get(j));
+                            }
                         }
+
                     }
                 }
             }
@@ -137,6 +152,85 @@ public class Protokoll {
         //System.out.println(Vornamen_Liste);
         //System.out.println(Nachnamen_Liste.size());
         //System.out.println(Fraktion_Liste.size());
+
+
+        NodeList pl_nr = doc.getElementsByTagName("sitzungsnr");
+        String Sitzungsindex = pl_nr.item(0).getTextContent();  // Sitzungsnummer
+        NodeList tagesOP = doc.getElementsByTagName("tagesordnungspunkt");
+        for (int j = 0;j < tagesOP.getLength(); j++) {
+
+            List Kommentare_Liste = new ArrayList();
+            List id_Liste = new ArrayList();
+            List Inhalt_Liste = new ArrayList();
+            //System.out.println(tagesOP.getTextContent());
+            Node Node_OP = (tagesOP.item(j));
+            //System.out.println(Node_OP.getTextContent());
+            if (Node_OP.getNodeType() == Node.ELEMENT_NODE) {
+                Element top = (Element) Node_OP;
+                String top_id = top.getAttribute("top-id");  // Gibt Tagesordnungspunkt aus.
+                NodeList child_list = top.getChildNodes();
+                for (int t = 0; t < child_list.getLength(); t++){
+                Node child = child_list.item(t);
+                //System.out.println(child.getTextContent());
+                if (child.getNodeType() == Node.ELEMENT_NODE) {
+                    Element Rede = (Element) child;
+                    if (Rede.getTagName() == "p"){
+                        //System.out.println(Rede.getTextContent());
+                        Inhalt_Liste.add(Rede.getTextContent());
+                    }
+                    else if (Rede.getTagName() == "kommentar") {
+                        //System.out.println(Rede.getTextContent());
+                        Inhalt_Liste.add(Rede.getTextContent());
+                    }
+                    if (Rede.getTagName() == "rede") {
+                        //System.out.println(Rede.getAttribute("id"));
+                        String rede_id = Rede.getAttribute("id");
+                        //Element p = (Element) Rede.getElementsByTagName("p");
+                        //System.out.println(p.getTextContent());
+                        NodeList rede_child_list = Rede.getChildNodes();
+                        //System.out.println(rede_child_list.getLength());
+                        for (int z = 0; z < rede_child_list.getLength(); z++){
+                            Node text_node = rede_child_list.item(z);
+                            // System.out.println(text_node.getTextContent());
+                            //System.out.println(text_node.getTextContent());
+                            if (text_node.getNodeType() == Node.ELEMENT_NODE) {
+                                Element text = (Element) text_node;
+                                if (text.getTagName() == "p"){
+                                    // System.out.println(text.getTextContent());
+                                    if (text.getAttribute("klasse").equals("redner")) {
+                                        NodeList redner_node = text.getChildNodes();
+                                        for (int k = 0; k < redner_node.getLength(); k++) {
+                                            Node r_node = redner_node.item(k);
+                                            if (r_node.getNodeType() == Node.ELEMENT_NODE) {
+                                                Element redner = (Element) r_node;
+                                                if (redner.getTagName() == "redner") {
+                                                    String redner_id = redner.getAttribute("id"); // Redner_id
+                                                    id_Liste.add(redner_id);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        //System.out.println(text.getTextContent());
+                                        Inhalt_Liste.add(text.getTextContent());
+                                    }
+                                }
+                                else if (text.getTagName() == "kommentar"){
+                                    //System.out.println("Das ist ein Kommentar:"  + text.getTextContent());
+                                    Kommentare_Liste.add(text.getTextContent());
+                                    Inhalt_Liste.add(text.getTextContent());
+                                }
+                                //System.out.println(text.getTextContent());
+                            }
+                        }
+                        }
+
+                    }
+                }
+                Tagesordnungspunkt top_obj = new Tagesordnungspunkt(top_id, Sitzungsindex, Inhalt_Liste);
+                top_list.add(top_obj);
+            }
+        }
 
     }
     // Print out all Speakers.
@@ -152,4 +246,28 @@ public class Protokoll {
             Redner_list.get(i).Filter(substring);
         }
     }
+    // List all Speaker after the party they are part of.
+    public void sort_Fraction(){
+        for (int f = 0; f < Fraktionen.size(); f++) {
+            if (Fraktionen.get(f).equals("0")) {
+            }
+            else {
+                System.out.println('\n' + ">>>>>>>>>>>>>>Auflistung aller " + Fraktionen.get(f) + " Redner:<<<<<<<<<<<<");
+                for (int i = 0; i < Redner_list.size(); i++) {
+                    Redner_list.get(i).Sort_For_Fraction((String) Fraktionen.get(f));
+                }
+            }
+        }
+    }
+    //
+    public void find_top(String Nummernidex, String Sitzungsindex) {
+        int found = 0;
+        for (int i = 0; i < top_list.size(); i++) {
+            found += top_list.get(i).print_top(Nummernidex, Sitzungsindex);
+        }
+        if (found < 1){
+            System.out.println("-------------Es konnte kein Tagesordnungspunkt gefunden werden--------------");
+        }
+    }
+
 }
