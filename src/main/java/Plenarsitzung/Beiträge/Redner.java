@@ -1,9 +1,9 @@
-package Plenarsitzung;
+package Plenarsitzung.Beiträge;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Redner {
+public class Redner implements Rede_File_Impl{
     String Fraktion;
     String Nachname;
     String Vorname;
@@ -27,7 +27,6 @@ public class Redner {
         Vorname  = Vor.toString();
         Nachname = Nach.toString();
         ID = id.toString();
-        //System.out.println(ID);
         if (Frak.toString().equals("0")) {
             Fraktion = "fraktionslos";
         }
@@ -57,7 +56,6 @@ public class Redner {
     }
     public Boolean Check_for_duplicate(Object Vor, Object Nach){
         if (Vorname.equals(Vor) && Nachname.equals(Nach)){
-            // System.out.println(Vorname + " " + Namenszusatz + " " + Nachname);
             return false;
         }
         return true;
@@ -86,7 +84,6 @@ public class Redner {
 
 
     public void Sort_For_Fraction(String Frak){
-        // System.out.println(Fraktion + "     "+ Frak);
         if (Fraktion.equals(Frak)){
             print_for_Frak();
         }
@@ -111,4 +108,29 @@ public class Redner {
             }
         }
     }
+
+    public String get_id() {
+        return ID;
+    }
+
+    public String get_name(){
+        if (Titel == null) {
+            if (Namenszusatz == null){
+                return (Vorname + " " + Nachname);
+            }
+            else{
+                return (Vorname + " " + Namenszusatz+ " " + Nachname);
+            }
+        }
+        else {
+            if (Namenszusatz == null){
+                return (Titel + " " + Vorname + " " + Nachname);
+            }
+            else {
+
+                return (Titel + " " + Vorname + " " + Namenszusatz + " " + Nachname);
+            }
+        }
+    }
+
 }

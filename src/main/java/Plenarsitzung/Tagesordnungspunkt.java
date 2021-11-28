@@ -20,8 +20,11 @@ public class Tagesordnungspunkt {
 
     public int print_top(String Nummer, String Sitzung){
         int Found = 0;
+        StringBuilder tp = new StringBuilder();
+        tp.append("Tagesordnungspunkt ");
+        tp.append(Nummer);
         if (Sitzung.equals(Sitzungsindex)){
-            if (Nummer.equals(Nummernindex)){
+            if (tp.toString().equals(top)){
                 Found += 1;
                 System.out.println(">>>>>>>>>>>>>Ausgabe des Textes der Sitzung Nr." +  Sitzungsindex + " " + top + "<<<<<<<<<<<<<<<<<<<<" + '\n');
                 for (int j = 0; j < Inhalt.size(); j++){

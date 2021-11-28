@@ -15,7 +15,7 @@ public class Main {
         Protokoll prot = new Protokoll();
         while (Readable){
             Scanner Xml = new Scanner(System.in);
-            System.out.println("Enter filepath:");
+            System.out.println("Geben Sie den Dateipfad des Zip Ordners an:");
             String file = Xml.nextLine();
             boolean read = prot.Open_Zip(file);
             if (read){
@@ -25,7 +25,7 @@ public class Main {
 
         Scanner User_Input = new Scanner(System.in);
         List valid_input = new ArrayList();
-        for (int i = 0; i < 6; i++){
+        for (int i = 0; i < 8; i++){
             valid_input.add(i);
         }
         boolean Valid = true;
@@ -33,19 +33,21 @@ public class Main {
         while (Valid) {
             try {
 
-                System.out.println('\n' + "Geben Sie die Nummer der Aufgabe ein (1-5):" + '\n' +
+                System.out.println('\n' + "Geben Sie die Nummer der Aufgabe ein (0-7):" + '\n' +
                         "[1]: Auflistung aller Redner" + '\n' +
                         "[2]: Nach dem Namen bestimmter Redner Filtern" + '\n' +
                         "[3]: Auflistung aller Redner nach Partei/Fraktion" + '\n' +
                         "[4]: Ausgabe des Textes eines bestimmten Tagesordnungspunktes" + '\n' +
                         "[5]: Ausgabe der Top 5 Tagesordnungspunkte mit den meisten Zwischenrufen" + '\n' +
+                        "[6]: Durchschnittliche Redelänge aller Beiträge" + '\n' +
+                        "[7]: Durchschnittliche Redelänge aller Redner" + '\n' +
                         "[0]: Exit");
 
                 String Input = User_Input.nextLine();
                 // Checks if the Input is a valid number.
                 if (valid_input.contains(Integer.parseInt(Input))) {
                 } else {
-                    System.out.println(">>>>>>>>>>Das hat nicht geklappt! Bitte geben Sie eine Nummer zwischen 1 und 4 ein.<<<<<<<<<<" + '\n');
+                    System.out.println(">>>>>>>>>>Das hat nicht geklappt! Bitte geben Sie eine Nummer zwischen 0 und 7 ein.<<<<<<<<<<" + '\n');
                 }
 
                 if (Input.equals("1")) {
@@ -72,6 +74,7 @@ public class Main {
                     System.out.println("Geben Sie einen Nummern-Index ein:");
                     String Nummer = Num.nextLine();
                     prot.find_top(Nummer, Sitzung);
+                    System.out.println("--------------------------------------------------------------------------");
                 }
 
                 else if (Input.equals("5")) {
@@ -80,12 +83,24 @@ public class Main {
                     System.out.println("------------------------------------------------------------------------------------------");
                 }
 
+                else if (Input.equals("6")) {
+                    System.out.println("------------------------------------------------------------------------------------------");
+                    prot.count_Speech();
+                    System.out.println("------------------------------------------------------------------------------------------");
+                }
+
+                else if (Input.equals("7")) {
+                    System.out.println("------------------------------------------------------------------------------------------");
+                    prot.count_Speech_per_speaker();
+                    System.out.println("------------------------------------------------------------------------------------------");
+                }
+
                 else if (Input.equals("0")){
                     System.out.println("Das Programm wurde erfolgreich beendet.");
                     Valid = false;
                 }
             } catch (Exception e) {
-                System.out.println(">>>>>>>>>>Das hat nicht geklappt! Bitte geben Sie eine Nummer zwischen 1 und 5 ein.<<<<<<<<<<" + '\n');
+                System.out.println(">>>>>>>>>>Das hat nicht geklappt! Bitte geben Sie eine Nummer zwischen 0 und 7 ein.<<<<<<<<<<" + '\n');
             }
         }
     }
