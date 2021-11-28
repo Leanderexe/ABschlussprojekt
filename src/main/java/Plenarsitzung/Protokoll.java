@@ -1,7 +1,7 @@
 package Plenarsitzung;
 
-import Plenarsitzung.Beiträge.Rede;
-import Plenarsitzung.Beiträge.Redner;
+import Plenarsitzung.Beitraege.Rede;
+import Plenarsitzung.Beitraege.Redner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -1,7 +1,4 @@
-package Plenarsitzung.Beiträge;
-
-import java.util.ArrayList;
-import java.util.List;
+package Plenarsitzung.Beitraege;
 
 public class Redner implements Rede_File_Impl{
     String Fraktion;

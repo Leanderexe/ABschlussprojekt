@@ -1,4 +1,4 @@
-package Plenarsitzung.Beiträge;
+package Plenarsitzung.Beitraege;
 
 public interface Rede_File_Impl {
     public String get_id();
