@@ -1,9 +1,11 @@
-package Plenarsitzung.Beitraege;
+package Plenarsitzung;
+
+import Plenarsitzung.Impl.Rede_File_Impl;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class Rede implements Rede_File_Impl{
+public class Rede implements Rede_File_Impl {
     String Sitzungsindex;
     String Nummernindex;
     String Datum;

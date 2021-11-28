@@ -1,6 +1,8 @@
-package Plenarsitzung.Beitraege;
+package Plenarsitzung;
 
-public class Redner implements Rede_File_Impl{
+import Plenarsitzung.Impl.Rede_File_Impl;
+
+public class Redner implements Rede_File_Impl {
     String Fraktion;
     String Nachname;
     String Vorname;
